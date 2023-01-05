@@ -16,16 +16,28 @@
       "port": 9099
     },
     "functions": {
-      "port": 5001
+      "port": 5002
     },
     "firestore": {
-      "port": 8080
+      "port": 5003
     },
     "hosting": {
-      "port": 5000
+      "port": 5001
     },
     "ui": {
       "enabled": true
     }
-  }
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log"
+      ]
+    }
+  ]
 }
