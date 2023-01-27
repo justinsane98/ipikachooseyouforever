@@ -28,6 +28,19 @@ class Index extends Component {
       completedCards: [],
       card1: null,
       card2: null,
+      difference: 0,
+      subTotal: 0,
+      successes: 0,
+      fails: 0,
+      streak: 0,
+      showPrices: false,
+      showStartButton: false,
+      showNextButton: false,
+      showFinishButton: false,
+      showCards: true,
+      showResults: false,
+      showBurst: true,
+      loading: true
     }
   }
   componentDidMount = async () => {
@@ -48,6 +61,10 @@ class Index extends Component {
 
   }
 
+  formatPrice = (price) => {
+    return "$" + price.toFixed(2)
+  }
+
   getTwoRandomCards = () => {
     const index1 = Math.floor(Math.random() * this.state.availableCards.length);
     let index2 = Math.floor(Math.random() * this.state.availableCards.length);
@@ -56,18 +73,162 @@ class Index extends Component {
       index2 = Math.floor(Math.random() * this.state.availableCards.length);
     }
 
-    console.log(this.state.availableCards[index1]);
-    console.log(this.state.availableCards[index2]);
-
     this.setState({
       card1: this.state.availableCards[index1],
       card2: this.state.availableCards[index2],
+      loading: false,
+      difference: this.state.availableCards[index1].price - this.state.availableCards[index2].price
     });
+  }
+
+  showNext = () => {
+    this.clearStage()
+    this.getTwoRandomCards()
+    this.setStage()
+    
+  }
+
+  chooseCard = (index) => {
+    this.showPrices()
+    this.hideBurst()
+    if(index == 1 && this.state.card1.price > this.state.card2.price) {
+      this.addToSuccesses()
+      this.addToStreak()
+      this.showResults()
+      this.showNextButton()
+    } else if (index == 2 && this.state.card2.price > this.state.card1.price) {
+      this.addToSuccesses()
+      this.addToStreak()
+      this.showResults()
+      this.showNextButton()
+    } else {
+      this.resetStreak()
+      if(this.state.fails < 2) {
+        this.addToFails()
+        this.showResults()
+        this.showNextButton()
+        } else {
+          this.showResults()
+        // show retry button!
+        console.log("GAME OVER!!!")
+        }
+    }
+    this.setSubTotal()
+    this.showResults()
+  }
+
+  showPrices = () => {
+    this.setState({
+      showPrices: true
+    })
+  }
+
+  hidePrices = () => {
+    this.setState({
+      showPrices: false
+    })
+  }
+
+  setSubTotal = () => {
+    const subTotal = this.state.subTotal + this.state.difference
+    this.setState({
+      subTotal: subTotal
+    })
+  }
+
+  addToSuccesses = () => {
+    this.setState({
+      successes: this.state.successes + 1
+    })
+  }
+
+  addToFails = () => {
+    this.setState({
+      fails: this.state.fails + 1
+    })
+  }
+
+  addToStreak = () => {
+    this.setState({
+      streak: this.state.streak + 1
+    })
+  }
+
+  resetStreak = () => {
+    this.setState({
+      streak: 0
+    })
+  }
+
+  // call after clicking next
+  clearStage = () => {
+    this.hideCards()
+    this.hidePrices()
+    this.hideResults()
+    this.hideNextButton()
+  }
+
+  // call after clearing stage
+  setStage = () => {
+    this.showCards()
+    this.showBurst()
+  }
+
+  showEndGame = () => {
+
+  }
+
+  hideCards = () => {
+    this.setState({
+      showCards: false 
+    })
+  }
+
+  showCards = () => {
+    this.setState({
+      showCards: true 
+    })
+  }
+
+  showNextButton = () => {
+    this.setState({
+      showNextButton: true 
+    })
+  }
+  
+  hideNextButton = () => {
+    this.setState({
+      showNextButton: false 
+    })
+  }
+
+  showResults = () => {
+    this.setState({
+      showResults: true 
+    })
+  }
+  
+  hideResults = () => {
+    this.setState({
+      showResults: false 
+    })
+  }
+
+  showBurst = () => {
+    this.setState({
+      showBurst: true 
+    })
+  }
+  
+  hideBurst = () => {
+    this.setState({
+      showBurst: false 
+    })
   }
 
   render() {
     return (
-      <div className="h-screen relative overflow-x-hidden">
+      <div className="h-screen relative overflow-hidden">
         <ParticleComponent/>
         <header className="fixed top-0 left-0 right-0 bg-black z-10 p-2">
           <div className="text-white text-xs flex text-center font-bold max-w-screen-sm mx-auto">
@@ -94,24 +255,55 @@ class Index extends Component {
             <div className="flex-1">R</div>
           </div>  
         </header>
-  
-        <BurstComponent/>
-        {this.state.card1 &&
-          <div className="absolute top-12 left-12 h-[75vh] w-[33vw]">
-            <img src={this.state.card1.image} alt={this.state.card1.name}/>
-            {/* TODO FORMAT PRICE */}
-            <div>${this.state.card1.price}</div>
-          </div>
-        }
-        
-        {this.state.card2 &&
-          <div className="absolute top-12 right-12 h-[75vh] w-[33vw]">
-            <img src={this.state.card2.image} alt={this.state.card2.name}/>
-            {/* TODO FORMAT PRICE */}
-            <div>${this.state.card2.price}</div>
-          </div>
-        }
 
+        <div className={`transition-opacity duration-250 ${this.state.loading ? "opacity-0" : "opcity-100"}`}>
+          {this.state.showBurst &&
+            <BurstComponent/>
+          }
+          
+          {this.state.showResults &&
+            <div className="absolute bottom-24 w-full flex justify-center">
+              <div>
+                <div>Difference: {this.formatPrice(Math.abs(this.state.difference))}</div>
+                <div>SubTotal: {this.formatPrice(this.state.subTotal)}</div>
+                <div>Streak: {this.state.streak}</div>
+                <div>Successes: {this.state.successes}</div>
+                <div>Fails: {this.state.fails}</div>
+
+                {this.state.showNextButton &&
+                  <button onClick={(e)=> {e.preventDefault();this.showNext()}} className="mt-4 rounded bg-black text-xl text-white font-bold px-4 py-2 inline-block">Next</button>
+                }
+              </div>
+            </div>
+          }
+
+          {this.state.card1 &&
+            <div onClick={(e) => {e.preventDefault();this.chooseCard(1)}} className={`absolute top-20 left-12 h-auto w-[33vw] -rotate-[5deg] transition duration-100 hover:cursor-pointer hover:scale-110 hover:-rotate-[3deg] ${this.state.showCards ? "opacity-100" : "opacity-0"}`}>
+              <div className="rounded-xl overflow-hidden">
+              <img src={this.state.card1.image} alt={this.state.card1.name}/>
+              </div>
+              {this.state.showPrices &&
+                <div className="absolute -bottom-4 -right-4 w-full flex justify-end">
+                  <div className={`bg-black text-black text-center w-auto p-4 rounded-xl bg-[#EED54E] ${this.state.card1.price > this.state.card2.price ? "text-3xl font-bold" : "text-lg" }`}>{this.formatPrice(this.state.card1.price)}</div>
+                </div>
+              }
+            </div>
+          }
+          
+          {this.state.card2 &&
+            <div onClick={(e) => {e.preventDefault();this.chooseCard(2)}} className={`absolute top-20 right-12 h-auto w-[33vw] rotate-[5deg] transition duration-100 hover:cursor-pointer hover:scale-110 hover:rotate-[3deg] ${this.state.showCards ? "opacity-100" : "opacity-0"}`}>
+              <div className="rounded-xl overflow-hidden">
+                <img src={this.state.card2.image} alt={this.state.card2.name}/>
+              </div>
+              {this.state.showPrices &&
+                <div className="absolute -bottom-4 -left-4 w-full flex justify-start">
+                  <div className={`bg-black text-black text-center w-auto p-4 rounded-xl bg-[#EED54E] ${this.state.card1.price < this.state.card2.price ? "text-3xl font-bold" : "text-lg" }`}>{this.formatPrice(this.state.card2.price)}</div>
+                  <div className={`absolute w-1 rounded-xl bg-[#EED54E] ${this.state.card1.price < this.state.card2.price ? "animate-ping" : "hidden" }`}></div>
+                </div>
+              }
+            </div>
+          }
+        </div>
       </div>
     );
   }
