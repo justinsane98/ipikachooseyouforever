@@ -2,7 +2,7 @@ import * as React from "react"
 const BurstComponent = () => {
 
   return (
-    <div className="grid h-screen place-content-center">
+    <div className="grid h-screen place-content-center landscape:mt-8">
       <div className={`relative text-center`}>
         <div className={`bg-black w-[200px] h-[200px] inline-block relative text-center animate-spin-slow`}>
           <div className={`bg-black absolute top-0 left-0 w-[200px] h-[200px] rotate-[60deg]`}></div>
