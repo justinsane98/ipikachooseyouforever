@@ -74,7 +74,7 @@ class Index extends Component {
         <div className={`transition-opacity duration-250 ${this.state.loading ? "opacity-0" : "opacity-100"}`}>
             <div className="relative grid h-screen mt-4 1024px:mt-0 place-content-center w-full flex justify-center text-center transition-opacity duration-250">
               <div className="rounded-xl bg-black-75 p-2 1024px:p-4">
-                <div className="rounded-xl bg-black 1024px:py-4 px-2 1024px:px-4 1024px:px-8 text-white text-left w-[75vw] 1024px:w-[50vw]">
+                <div className="rounded-xl bg-black 1024px:py-4 px-2 1024px:px-8 text-white text-left w-[75vw] 1024px:w-[50vw]">
                   <div className="text-3xl 1024px:text-7xl text-pink mb-2 text-center">Leaderboard</div>
                   <div className="flex w-full text-xl 1024px:text-3xl border-b border-white-25 1024px:mb-2 1024px:pb-2">
                     <div className="w-1/4 text-left">
