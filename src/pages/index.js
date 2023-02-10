@@ -2,7 +2,7 @@ import * as React from "react"
 import { Component } from 'react';
 import { initializeApp } from "firebase/app";
 import { getFirestore, collection, getDocs, connectFirestoreEmulator } from "firebase/firestore";
-import { getAnalytics } from "firebase/analytics";
+import { getAnalytics, logEvent } from "firebase/analytics";
 import { Link } from "gatsby"
 import ParticleComponent from '../components/particles';
 import BurstComponent from '../components/burst';
@@ -20,6 +20,11 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+
+let analytics = null;
+if (typeof window !== 'undefined') {
+    analytics = getAnalytics(app);
+}
 
 class Index extends Component {
   constructor(props) {
@@ -60,7 +65,10 @@ class Index extends Component {
     });
   
     console.log(this.state.availableCards);
-
+    logEvent(analytics, 'startGame', {
+      id: "public"
+    });
+    
     this.getTwoRandomCards();
 
   }
@@ -109,6 +117,9 @@ class Index extends Component {
         this.showResults()
         this.showNextButton()
         this.addToSubTotal()
+        logEvent(analytics, 'pickSuccess', {
+          id: "public"
+        });
       } else if (index == 2 && this.state.card2.price > this.state.card1.price) {
         this.setSuccess()
         this.addToSuccesses()
@@ -116,16 +127,25 @@ class Index extends Component {
         this.showResults()
         this.showNextButton()
         this.addToSubTotal()
+        logEvent(analytics, 'pickSuccess', {
+          id: "public"
+        });
       } else {
         this.setFail()
         this.addToFails()
         this.resetStreak()
         this.subtractFromSubTotal()
         this.showResults()
+        logEvent(analytics, 'pickFail', {
+          id: "public"
+        });
         if(this.state.fails < 2) {
           this.showNextButton()
           } else {
             this.showRetryButton()
+            logEvent(analytics, 'gameOver', {
+              id: "public"
+            });
           }
       }
       this.showResults()
@@ -320,7 +340,7 @@ class Index extends Component {
 
   render() {
     return (
-      <div className="h-screen relative overflow-hidden">
+      <div className="h-screen relative overflow-hidden bg-black">
         <ParticleComponent/>
         <HeaderComponent/>
 
@@ -332,7 +352,7 @@ class Index extends Component {
           {this.state.showResults &&
             <div className={`relative grid h-screen mt-4 1024px:mt-0 place-content-center w-full flex justify-center text-center transition-opacity duration-250 ${this.state.showResults ? "opacity-100" : "opacity-0"}`}>
               <div className="rounded-xl bg-black-75 p-2 1024px:p-4">
-                <div className="rounded-xl bg-black py-4 1024px:py-8 px-8 1024px:px-16 text-white">
+                <div className="rounded-xl bg-black py-4 1024px:py-8 px-8 1024px:px-16 text-white text-left w-[25vw]">
                 {this.state.success &&
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" className="w-16 1024px:w-32 fill-green inline-block">
                     <path d="M88 192h-48C17.94 192 0 209.9 0 232v208C0 462.1 17.94 480 40 480h48C110.1 480 128 462.1 128 440v-208C128 209.9 110.1 192 88 192zM96 440C96 444.4 92.41 448 88 448h-48C35.59 448 32 444.4 32 440v-208C32 227.6 35.59 224 40 224h48C92.41 224 96 227.6 96 232V440zM512 221.5C512 187.6 484.4 160 450.5 160h-102.5c11.98-27.06 18.83-53.48 18.83-67.33C366.9 62.84 343.6 32 304.9 32c-41.22 0-50.7 29.11-59.12 54.81C218.1 171.1 160 184.8 160 208C160 217.1 167.5 224 176 224C180.1 224 184.2 222.4 187.3 219.3c52.68-53.04 67.02-56.11 88.81-122.5C285.3 68.95 288.2 64 304.9 64c20.66 0 29.94 16.77 29.94 28.67c0 10.09-8.891 43.95-26.62 75.48c-1.366 2.432-2.046 5.131-2.046 7.83C306.2 185.5 314 192 322.2 192h128.3C466.8 192 480 205.2 480 221.5c0 15.33-12.08 28.16-27.48 29.2c-8.462 .5813-14.91 7.649-14.91 15.96c0 12.19 12.06 12.86 12.06 30.63c0 14.14-10.11 26.3-24.03 28.89c-5.778 1.082-13.06 6.417-13.06 15.75c0 8.886 6.765 10.72 6.765 23.56c0 31.02-31.51 22.12-31.51 43.05c0 3.526 1.185 5.13 1.185 10.01C389 434.8 375.8 448 359.5 448H303.9c-82.01 0-108.3-64.02-127.9-64.02c-8.873 0-16 7.193-16 15.96C159.1 416.3 224.6 480 303.9 480h55.63c33.91 0 61.5-27.58 61.5-61.47c18.55-10.86 30.33-31 30.33-53.06c0-4.797-.5938-9.594-1.734-14.27c19.31-10.52 32.06-30.97 32.06-53.94c0-7.219-1.281-14.31-3.75-20.98C498.2 266.2 512 245.3 512 221.5z"/>
@@ -345,29 +365,33 @@ class Index extends Component {
                   </svg>
                 }
                 <div className="my-2 1024px:my-4 text-xl font-bold">
-                  <div className={`text-xl 1024px:text-3xl mb-0 1024px:mb-2 ${this.state.success ? "text-green" : "text-red"}`}>{this.state.success ? "+" : "-"}{this.formatPrice(this.state.difference)}</div>
-                  {/* TODO format negative subtotal better */}
-                  <div className="text-3xl 1024px:text-5xl mb-0 1024px:mb-4">{this.state.subTotal > 0 ? this.formatPrice(this.state.subTotal) : "-" + this.formatPrice(Math.abs(this.state.subTotal))}</div>
-                  {/* Perhaps come back to this when we want to introduce a streak mulitplier */}
+                  <div className="flex w-full items-center">
+                    <div className={`text-xl w-1/2 1024px:text-3xl mb-0 text-left 1024px:mb-2 mr-2 ${this.state.success ? "text-green" : "text-red"}`}>{this.state.success ? "+" : "-"}{this.formatPrice(this.state.difference)}</div>
+                    <div className="text-3xl w-1/2 1024px:text-5xl mb-0 text-right 1024px:mb-4">{this.state.subTotal > 0 ? this.formatPrice(this.state.subTotal) : "-" + this.formatPrice(Math.abs(this.state.subTotal))}</div>
+                  </div>
+                 {/* Perhaps come back to this when we want to introduce a streak mulitplier */}
                   {/* <div>Streak: {this.state.streak}</div> */}
                   {/* TODO display ratio better... perhaps a percentage of a bar with numbers pinning the ends */}
-                  <div>{this.state.successes} / {this.state.successes + this.state.fails}</div>
-                  <div className="flex justify-center w-full my-2 1024px:my-4 text-black">
-                    <div className={`w-8 1024px:w-16 h-8 1024px:h-16 rounded-full mx-2 shadow-inner flex content-center justify-center items-center overflow-hidden ${this.state.fails > 0 ? "bg-red" : "bg-white-25"}`}>
+                  <div className="w-full bg-white-25 rounded-full h-2">
+                    <div className="rounded-full h-2 bg-white" style={{"width" : (this.state.successes/(this.state.successes + this.state.fails))*100 + "%"}}></div>
+                  </div>
+                  <div className="flex w-full">
+                  <div className="flex my-2 w-5/6 1024px:my-4 text-black">
+                    <div className={`w-4 1024px:w-8 h-4 1024px:h-8 rounded-full mr-1 shadow-inner flex content-center justify-center items-center overflow-hidden ${this.state.fails > 0 ? "bg-red" : "bg-white-25"}`}>
                       {this.state.fails > 0 &&
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" className="w-6 1024px:w-12 fill-black-25 inline-block">
                         <path d="M256 512c141.4 0 256-114.6 256-256S397.4 0 256 0S0 114.6 0 256S114.6 512 256 512zm97.9-320l-17 17-47 47 47 47 17 17L320 353.9l-17-17-47-47-47 47-17 17L158.1 320l17-17 47-47-47-47-17-17L192 158.1l17 17 47 47 47-47 17-17L353.9 192z"/>
                       </svg>
                       }
                     </div>
-                    <div className={`w-8 1024px:w-16 h-8 1024px:h-16  rounded-full mx-2 shadow-inner flex content-center justify-center items-center overflow-hidden ${this.state.fails > 1 ? "bg-red" : "bg-white-25"}`}>
+                    <div className={`w-4 1024px:w-8 h-4 1024px:h-8  rounded-full mr-1 shadow-inner flex content-center justify-center items-center overflow-hidden ${this.state.fails > 1 ? "bg-red" : "bg-white-25"}`}>
                       {this.state.fails > 1 &&
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" className="w-6 1024px:w-12 fill-black-25 inline-block">
                         <path d="M256 512c141.4 0 256-114.6 256-256S397.4 0 256 0S0 114.6 0 256S114.6 512 256 512zm97.9-320l-17 17-47 47 47 47 17 17L320 353.9l-17-17-47-47-47 47-17 17L158.1 320l17-17 47-47-47-47-17-17L192 158.1l17 17 47 47 47-47 17-17L353.9 192z"/>
                       </svg>
                       }
                     </div>
-                    <div className={`w-8 1024px:w-16 h-8 1024px:h-16  rounded-full mx-2 shadow-inner flex content-center justify-center items-center overflow-hidden ${this.state.fails > 2 ? "bg-red" : "bg-white-25"}`}>
+                    <div className={`w-4 1024px:w-8 h-4 1024px:h-8 rounded-full shadow-inner flex content-center justify-center items-center overflow-hidden ${this.state.fails > 2 ? "bg-red" : "bg-white-25"}`}>
                       {this.state.fails > 2 &&
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" className="w-6 1024px:w-12 fill-black-25 inline-block">
                         <path d="M256 512c141.4 0 256-114.6 256-256S397.4 0 256 0S0 114.6 0 256S114.6 512 256 512zm97.9-320l-17 17-47 47 47 47 17 17L320 353.9l-17-17-47-47-47 47-17 17L158.1 320l17-17 47-47-47-47-17-17L192 158.1l17 17 47 47 47-47 17-17L353.9 192z"/>
@@ -375,13 +399,15 @@ class Index extends Component {
                       }
                     </div>
                   </div>
+                    <div className="mt-1 text-right w-1/6">{this.state.successes} / {this.state.successes + this.state.fails}</div>
+                  </div>
                 </div>
                 <div>
                   {this.state.showNextButton &&
-                    <button onClick={(e)=> {e.preventDefault();this.showNext()}} className="mt-2 1024px:mt-4 rounded bg-green text-xl 1024px:text-3xl text-white font-bold px-4 py-2 w-full transition-all hover:scale-110">Next</button>
+                    <button onClick={(e)=> {e.preventDefault();this.showNext()}} className="mt-2 1024px:mt-4 rounded bg-green text-xl 1024px:text-3xl text-black font-bold px-4 py-2 w-full transition-all hover:scale-110">Next</button>
                   }
                   {this.state.showRetryButton &&
-                    <button onClick={(e)=> {e.preventDefault();this.retry()}} className="mt-2 1024px:mt-4 rounded bg-red text-xl 1024px:text-3xl text-white font-bold px-4 py-2 w-full transition-all hover:scale-110">Try Again</button>
+                    <button onClick={(e)=> {e.preventDefault();this.retry()}} className="mt-2 1024px:mt-4 rounded bg-red text-xl 1024px:text-3xl text-black font-bold px-4 py-2 w-full transition-all hover:scale-110">Try Again</button>
                   }
                   </div>
                 </div>
@@ -396,7 +422,7 @@ class Index extends Component {
               </div>
               {this.state.showPrices &&
                 <div className="absolute -bottom-4 -right-4 w-full flex justify-end">
-                  <div className={`bg-black text-black text-center w-auto p-4 rounded-xl bg-yellow ${this.state.card1.price > this.state.card2.price ? "text-3xl font-bold" : "text-lg" }`}>{this.formatPrice(this.state.card1.price)}</div>
+                  <div className={`bg-black text-black text-center w-auto p-4 rounded-xl bg-gold ${this.state.card1.price > this.state.card2.price ? "text-3xl font-bold" : "text-lg" }`}>{this.formatPrice(this.state.card1.price)}</div>
                 </div>
               }
             </div>
@@ -409,8 +435,7 @@ class Index extends Component {
               </div>
               {this.state.showPrices &&
                 <div className="absolute -bottom-4 -left-4 w-full flex justify-start">
-                  <div className={`bg-black text-black text-center w-auto p-4 rounded-xl bg-yellow ${this.state.card1.price < this.state.card2.price ? "text-3xl font-bold" : "text-lg" }`}>{this.formatPrice(this.state.card2.price)}</div>
-                  <div className={`absolute w-1 rounded-xl bg-[#EED54E] ${this.state.card1.price < this.state.card2.price ? "animate-ping" : "hidden" }`}></div>
+                  <div className={`bg-black text-black text-center w-auto p-4 rounded-xl bg-gold ${this.state.card1.price < this.state.card2.price ? "text-3xl font-bold" : "text-lg" }`}>{this.formatPrice(this.state.card2.price)}</div>
                 </div>
               }
             </div>

@@ -2,4 +2,4 @@
 @tailwind components;
 @tailwind utilities;
 
-body { font-family: "Sofia Sans Extra Condensed", sans-serif; }
+body, html { font-family: "Sofia Sans Extra Condensed", sans-serif; background-color: #000000; overscroll-behavior: contain;}

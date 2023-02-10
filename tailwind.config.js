@@ -33,10 +33,11 @@ module.exports = {
           25: "rgba(0, 0, 0, 0.2)",
           10: "rgba(0, 0, 0, 0.1)"
         },
-        red: "#E3170A",
-        green: "#499F68",
-        // pink: "#F00699",
-        yellow: "#EED54E"
+        red: "#EB6060",
+        green: "#6BEB60",
+        pink: "#FA00FF",
+        yellow: "#EED54E",
+        gold: "#FFC700"
       },
       screens:{
         '320px': '320px',
