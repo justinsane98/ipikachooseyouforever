@@ -52,6 +52,8 @@ class Index extends Component {
       showBurst: true,
       loading: true,
       cardChosen: false,
+      saved: false,
+      profane: false,
     }
   }
   componentDidMount = async () => {
@@ -66,7 +68,6 @@ class Index extends Component {
       this.setState({set: setArray});
     });
   
-    console.log(this.state.availableCards);
     logEvent(analytics, 'startGame', {
       id: "public"
     });
@@ -283,19 +284,35 @@ class Index extends Component {
 
   setInitials = (e) => {
     this.setState({
-      initials: e.target.value 
+      initials: e.target.value.toUpperCase().replace(/[^a-z]/gi, '')
     })
   }
 
   saveScore = async () => {
-    // profanity check...
-    if(this.state.initials != ""){
-      await setDoc(doc(db, "leaderboard", uuidv4()), {
-        initials: this.state.initials,
-        total: this.state.subTotal,
-        successes: this.state.successes,
-        date: timestamp('YYYY/MM/DD:mm:ss')
-      });
+    this.setState({
+      profane: false
+    })
+    if(this.state.initials != "" && this.state.initials.length === 3){
+      // profanity check...
+      const profane = ["ASS", "CUM", "FUC", "FUK", "SEX", "JEW", "GAY", "TIT", "KKK", "DIK", "DIK", "CNT", "XXX"]
+      if(profane.includes(this.state.initials)){
+        this.setState({
+          profane: true
+        })
+      } else {
+        this.setState({
+          saved: true
+        })
+        await setDoc(doc(db, "leaderboard", uuidv4()), {
+          initials: this.state.initials,
+          total: this.state.subTotal,
+          successes: this.state.successes,
+          date: timestamp('YYYY/MM/DD:mm:ss')
+        });
+      }
+      
+    } else {
+      
     }
   }
 
@@ -466,12 +483,26 @@ class Index extends Component {
             <div className="rounded-xl bg-black-75 p-2 1024px:p-4">
               <div className="rounded-xl bg-black py-4 px-8 text-white text-left w-[50vw] text-center">
                   <div className="text-3xl 1024px:text-7xl text-pink mb-2">{this.state.subTotal > 0 ? "Congratulations!" : "Sorry!"}</div>
-                  <div className="text-xl 1024px:text-3xl mb-4"><span className="text-red">You</span> <span className="text-gold">pika</span> <span className="text-green">chose</span> correctly {this.state.successes} times and {this.state.subTotal > 0 ? " won " : " lost "} {this.formatPrice(Math.abs(this.state.subTotal))}!</div>
-                  {this.state.subTotal > 0 &&
-                    <div className="my-4 1024px:my-8">
-                      <input onChange={(e) => {e.preventDefault();this.setInitials(e)}} className="w-full text-xl 1024px:text-3xl rounded uppercase p-2 text-center bg-white-25" placeholder="Enter Your Intials" maxLength={3}></input>
-                      <button onClick={(e)=> {e.preventDefault();this.saveScore()}} className="mt-2 mb-2 1024px:mt-4 rounded bg-pink text-xl 1024px:text-3xl text-black font-bold px-4 py-2 w-full transition-all hover:scale-110">Save Highscore</button>
+                  {!this.state.saved &&
+                    <div>
+                      <div className="text-xl 1024px:text-3xl mb-4"><span className="text-red">You</span> <span className="text-gold">pika</span> <span className="text-green">chose</span> correctly {this.state.successes} times and {this.state.subTotal > 0 ? " won " : " lost "} {this.formatPrice(Math.abs(this.state.subTotal))}!</div>
+                      {this.state.subTotal > 0 &&
+                        <div className="my-4 1024px:my-8">
+                          <input onChange={(e) => {e.preventDefault();this.setInitials(e)}} className="w-full text-xl 1024px:text-3xl rounded uppercase p-2 text-center bg-white-25" placeholder="Enter Your Intials" maxLength={3} minLength={3} value={this.state.initials}></input>
+                          <button onClick={(e)=> {e.preventDefault();this.saveScore()}} className="mt-2 mb-2 1024px:mt-4 rounded bg-pink text-xl 1024px:text-3xl text-black font-bold px-4 py-2 w-full transition-all hover:scale-110">Save Highscore</button>
+                          {this.state.profane &&
+                            <div className="">This a kids game... {"(ಠ_ಠ)"}</div>
+                          }
+                        </div>
+                      }
                     </div>
+                  }
+
+                  {this.state.saved &&
+                    <div>
+                      <div className="text-xl 1024px:text-3xl mb-4">Your score has been saved. View the leaderboard!</div>
+                      <Link to="/leaderboard" className="mt-2 mb-2 inline-block 1024px:mt-4 rounded bg-pink text-xl 1024px:text-3xl text-black font-bold px-4 py-2 w-full transition-all hover:scale-110">View Leaderboard</Link>
+                    </div>  
                   }
                   {this.state.showRetryButton &&
                     <button onClick={(e)=> {e.preventDefault();this.retry()}} className="1024px:mt-4 rounded bg-green text-xl 1024px:text-3xl text-black font-bold px-4 py-2 w-full transition-all hover:scale-110">Try Again</button>
