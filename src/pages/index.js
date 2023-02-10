@@ -307,7 +307,7 @@ class Index extends Component {
           initials: this.state.initials,
           total: this.state.subTotal,
           successes: this.state.successes,
-          date: timestamp('YYYY/MM/DD:mm:ss')
+          date: timestamp('YYYY/MM/DD HH:mm:ss')
         });
       }
       

@@ -104,7 +104,7 @@ class Index extends Component {
                         <div className="w-1/4 text-left">{index+1}. {leader.data().initials}</div>
                         <div className="w-1/4">{this.formatPrice(leader.data().total)}</div>
                         <div className="w-1/4 text-center">{leader.data().successes}</div>
-                        <div className="w-1/4 text-right">{ConvertDateToUsString(new Date(leader.data().date.replace(/\s/, 'T')))}</div>
+                        <div className="w-1/4 text-right">{ConvertDateToUsString(new Date(leader.data().date))}</div>
                       </div>
                     )}
                   </div>
