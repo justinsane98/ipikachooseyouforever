@@ -5,5 +5,12 @@ service cloud.firestore {
       allow get;
       allow read;
     }
+
+     match /leaderboard/{record} {
+      allow get;
+      allow read;
+      allow create;
+    }
+    
   }
 }
