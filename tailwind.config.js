@@ -37,7 +37,8 @@ module.exports = {
         green: "#6BEB60",
         pink: "#FA00FF",
         yellow: "#EED54E",
-        gold: "#FFC700"
+        gold: "#FFC700",
+        blue: "#0affed"
       },
       screens:{
         '320px': '320px',

@@ -5,7 +5,7 @@ const HeaderComponent = () => {
 
   return (
     <header className="fixed top-0 left-0 right-0 bg-black z-10 p-2">
-      <div className="text-lg text-center font-black mx-auto tracking-[0.25em]"><span className="text-pink">I</span> <span className="text-gold">PIKA</span> <span className="text-green">CHOOSE</span> <span className="text-red">YOU</span></div>
+      <div className="text-lg text-center font-black mx-auto tracking-[0.25em]"><span className="text-pink">I</span> <span className="text-gold">PIKA</span> <span className="text-green">CHOOSE</span> <span className="text-blue">YOU</span></div>
       {/* <Link to="/" className="group absolute top-0 left-0 py-3 px-4 inline-block">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" className="w-6 fill-white-50 group-hover:fill-white">
           <path d="M303.5 5.7c-9-7.6-22.1-7.6-31.1 0l-264 224c-10.1 8.6-11.3 23.7-2.8 33.8s23.7 11.3 33.8 2.8L64 245.5V432c0 44.2 35.8 80 80 80H432c44.2 0 80-35.8 80-80V245.5l24.5 20.8c10.1 8.6 25.3 7.3 33.8-2.8s7.3-25.3-2.8-33.8l-264-224zM112 432V204.8L288 55.5 464 204.8V432c0 17.7-14.3 32-32 32H144c-17.7 0-32-14.3-32-32zm64-162.7c0 16.2 6.5 31.8 17.9 43.3l82.7 82.7c6.2 6.2 16.4 6.2 22.6 0l82.7-82.7c11.5-11.5 17.9-27.1 17.9-43.3c0-33.8-27.4-61.3-61.3-61.3c-16.2 0-31.8 6.5-43.3 17.9l-7.4 7.4-7.4-7.4c-11.5-11.5-27.1-17.9-43.3-17.9c-33.8 0-61.3 27.4-61.3 61.3z"/>

@@ -73,7 +73,7 @@ const ParticleComponent = () => {
               },
               particles: {
                 color: {
-                  value: ["#5bc0eb", "#fde74c", "#9bc53d", "#e55934", "#fa7921"]
+                  value: ["#EB6060", "#6BEB60", "#FA00FF", "#FFC700", "#0affed"]
                 }
               }
             }
@@ -90,7 +90,7 @@ const ParticleComponent = () => {
               },
               particles: {
                 color: {
-                  value: ["#FA00FF", "#FFC700", "#000000", "#6BEB60", "#EB6060"]
+                  value: ["#EB6060", "#6BEB60", "#FA00FF", "#FFC700", "#0affed"]
                 }
               }
             }
