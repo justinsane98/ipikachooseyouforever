@@ -516,7 +516,7 @@ class Index extends Component {
           {this.state.card1 &&
             <div onClick={(e) => {e.preventDefault();this.chooseCard(1)}} className="h-auto max-w-[50vw] 475px:max-w-[25vw] 1024px:max-w-[33vw] -rotate-[5deg] -ml-36 1024px:ml-6 transition duration-100 hover:cursor-pointer hover:scale-110 hover:-rotate-[3deg] pointer-events-auto">
               <div className="rounded-xl overflow-hidden">
-              <img src={this.state.card1.image} alt={this.state.card1.name}/>
+              <img className="max-h-[88vh]" src={this.state.card1.image} alt={this.state.card1.name}/>
               </div>
               {this.state.showPrices &&
                 <div className="absolute -bottom-4 -left-4 768px:-right-4 flex justify-end">
@@ -529,7 +529,7 @@ class Index extends Component {
           {this.state.card2 &&
             <div onClick={(e) => {e.preventDefault();this.chooseCard(2)}} className="h-auto max-w-[50vw] 475px:max-w-[25vw] 1024px:max-w-[33vw] rotate-[5deg] -mr-36 1024px:mr-6 transition duration-100 hover:cursor-pointer hover:scale-110 hover:rotate-[3deg] pointer-events-auto">
               <div className="rounded-xl overflow-hidden">
-                <img src={this.state.card2.image} alt={this.state.card2.name}/>
+                <img className="max-h-[88vh]" src={this.state.card2.image} alt={this.state.card2.name}/>
               </div>
               {this.state.showPrices &&
                 <div className="absolute -bottom-4 -right-4 768px:-left-4 flex justify-start">
