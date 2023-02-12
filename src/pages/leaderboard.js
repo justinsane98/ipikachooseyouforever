@@ -108,7 +108,7 @@ class Index extends Component {
                       </div>
                     )}
                   </div>
-                  <Link to="/" className=" text-center mt-2 mb-2 inline-block 1024px:mt-4 w-full rounded bg-pink text-xl 1024px:text-3xl text-black font-bold px-4 py-2 transition-all hover:scale-110">Start New Game</Link>
+                  <Link to="/game" className=" text-center mt-2 mb-2 inline-block 1024px:mt-4 w-full rounded bg-pink text-xl 1024px:text-3xl text-black font-bold px-4 py-2 transition-all hover:scale-110">Start New Game</Link>
                 </div>
               </div>
             </div>

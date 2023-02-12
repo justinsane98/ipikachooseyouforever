@@ -514,7 +514,7 @@ class Index extends Component {
 
           <div className={`absolute top-4 left-0 flex flex-col-reverse landscape:flex-row 768px:flex-row h-screen w-full justify-center items-center pointer-events-none ${this.state.showCards ? "opacity-100" : "opacity-0"}`}>
           {this.state.card1 &&
-            <div onClick={(e) => {e.preventDefault();this.chooseCard(1)}} className="h-auto max-w-[50vw] 475px:max-w-[25vw] 1024px:max-w-[33vw] -rotate-[5deg] -ml-36 1024px:ml-6 transition duration-100 hover:cursor-pointer hover:scale-110 hover:-rotate-[3deg] pointer-events-auto">
+            <div onClick={(e) => {e.preventDefault();this.chooseCard(1)}} className="h-auto max-w-[50vw] 475px:max-w-[33vw] -rotate-[5deg] -ml-36 1024px:ml-6 transition duration-100 hover:cursor-pointer hover:scale-110 hover:-rotate-[3deg] pointer-events-auto">
               <div className="rounded-xl overflow-hidden">
               <img className="max-h-[88vh]" src={this.state.card1.image} alt={this.state.card1.name}/>
               </div>
@@ -527,7 +527,7 @@ class Index extends Component {
           }
           <div className="h-[25vh] w-[33vw]"></div>
           {this.state.card2 &&
-            <div onClick={(e) => {e.preventDefault();this.chooseCard(2)}} className="h-auto max-w-[50vw] 475px:max-w-[25vw] 1024px:max-w-[33vw] rotate-[5deg] -mr-36 1024px:mr-6 transition duration-100 hover:cursor-pointer hover:scale-110 hover:rotate-[3deg] pointer-events-auto">
+            <div onClick={(e) => {e.preventDefault();this.chooseCard(2)}} className="h-auto max-w-[50vw] 475px:max-w-[33vw] rotate-[5deg] -mr-36 1024px:mr-6 transition duration-100 hover:cursor-pointer hover:scale-110 hover:rotate-[3deg] pointer-events-auto">
               <div className="rounded-xl overflow-hidden">
                 <img className="max-h-[88vh]" src={this.state.card2.image} alt={this.state.card2.name}/>
               </div>
