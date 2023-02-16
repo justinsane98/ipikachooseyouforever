@@ -32,6 +32,7 @@ class Index extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      set: "base1",
       availableCards: [],
       completedCards: [],
       card1: null,
@@ -61,19 +62,32 @@ class Index extends Component {
       if (location.hostname === "localhost") {
         connectFirestoreEmulator(db, "localhost", 5003);
       }
-    }
-    const setSnapshot = await getDocs(collection(db, "sets", "base1", "cards"));
-    setSnapshot.docs.map((card) => {
-      let setArray = this.state.availableCards.push(card.data());
-      this.setState({set: setArray});
-    });
-  
-    logEvent(analytics, 'startGame', {
-      id: "public"
-    });
-    
-    this.getTwoRandomCards();
 
+      const urlParams = new URLSearchParams(window.location.search)
+      if (urlParams.get("set")) {
+        this.setState({
+          set: urlParams.get("set")
+        }, async () => {
+          this.getSet()
+        })
+      } else {
+        this.getSet()
+      }
+    }
+  }
+
+  getSet = async () => {
+    const setSnapshot = await getDocs(collection(db, "sets", this.state.set , "cards"));
+      setSnapshot.docs.map((card) => {
+        let setArray = this.state.availableCards.push(card.data());
+        this.setState({set: setArray});
+      });
+    
+      logEvent(analytics, 'startGame', {
+        id: "public"
+      });
+      
+      this.getTwoRandomCards();
   }
 
   formatPrice = (price) => {

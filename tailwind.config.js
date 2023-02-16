@@ -52,7 +52,7 @@ module.exports = {
         '1600px': '1600px',
         '1920px': '1920px',
       },
-    }
+    },
   },
   plugins: [],
 }
